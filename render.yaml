@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: friday-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn backend.web_api:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    envVars:
+      - key: GEMINI_API_KEY
+        value: AIzaSyC8uqHSh72oTSIpbfIECvQ3dFovKqZwhYE
+      - key: ASSEMBLYAI_API_KEY  
+        value: 8203bb2e29484b4f8cb70e7f73a6788e
+      - key: ELEVENLABS_API_KEY
+        value: sk_44144b63e7230ca8da56156aca08d4c6461ce1182978b977

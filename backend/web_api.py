@@ -209,6 +209,48 @@ async def clear_chat():
         return {"message": "Chat cleared", "status": "success"}
     raise HTTPException(status_code=503, detail="AI not available")
 
+@app.post("/api/analyze-image")
+async def analyze_image(
+    file: UploadFile = File(...),
+    question: str = Form("What do you see in this image?")
+):
+    try:
+        logger.info(f"Received image analysis request: {file.filename}, question: {question}")
+        
+        if not ai_engine.is_initialized:
+            raise HTTPException(status_code=503, detail="AI not available")
+        
+        # Validate file type and size
+        if not file.content_type.startswith('image/'):
+            raise HTTPException(status_code=400, detail="File must be an image")
+        
+        # Read file content
+        image_data = await file.read()
+        logger.info(f"Image size: {len(image_data)} bytes")
+        
+        if len(image_data) > 10 * 1024 * 1024:  # 10MB limit
+            raise HTTPException(status_code=400, detail="Image too large")
+        
+        # Process image
+        try:
+            image = Image.open(io.BytesIO(image_data))
+            if image.mode != 'RGB':
+                image = image.convert('RGB')
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Invalid image format: {str(e)}")
+        
+        # Analyze
+        analysis = ai_engine.analyze_image(image, question)
+        logger.info(f"Analysis completed successfully")
+        
+        return ChatResponse(response=analysis)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Image analysis error: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))

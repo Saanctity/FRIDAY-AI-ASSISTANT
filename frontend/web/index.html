@@ -374,6 +374,7 @@
                 <div class="input-area">
                     <input type="text" id="messageInput" placeholder="Ask FRIDAY anything..." autocomplete="off">
                     <button id="sendBtn" class="btn">Send</button>
+                    <button id="stopBtn" class="btn" style="background: #ff4444;">🛑 Stop</button>
                     <button id="voiceBtn" class="btn btn-voice">🎤</button>
                     <input type="file" id="imageInput" accept="image/*" style="display: none;">
                     <button id="imageBtn" class="btn btn-image">📷</button>
@@ -441,6 +442,7 @@
                 this.checkAPIConnection();
                 this.updateSystemInfo();
                 this.addWelcomeMessage();
+                this.isCurrentlySpeaking = false;
     
                 // Update time every second
                 setInterval(() => this.updateTime(), 1000);
@@ -471,6 +473,8 @@
                 document.getElementById('imageUploadArea').addEventListener('click', () => {
                     document.getElementById('imageInput').click();
                 });
+
+                document.getElementById('stopBtn').addEventListener('click', () => this.stopSpeaking());
                 
                 document.getElementById('imageInput').addEventListener('change', (e) => this.handleImageUpload(e));
                 
@@ -539,10 +543,8 @@
                         const transcript = event.results[0][0].transcript.toLowerCase();
     
                         // Check for stop command
-                        if (transcript.includes('friday stop') || transcript.includes('stop friday')) {
-                            this.speechSynthesis.cancel(); // Stop current speech
-                            this.addMessage('system', 'Speech stopped');
-                            this.restartWakeWordDetection();
+                        if (transcript.includes('stop') || transcript.includes('quiet') || transcript.includes('silence')) {
+                            this.stopSpeaking();
                             return;
                         }
     
@@ -707,45 +709,38 @@
             speak(text) {
                 if (this.speechSynthesis && text) {
                     this.speechSynthesis.cancel();
+                    this.isCurrentlySpeaking = true;
         
                     const utterance = new SpeechSynthesisUtterance(text);
-        
-                    // Better voice settings
-                    utterance.rate = 0.85;      // Slower, more natural
-                    utterance.pitch = 1.1;      // Slightly higher pitch
+                    utterance.rate = 0.85;
+                    utterance.pitch = 1.1;
                     utterance.volume = 0.9;
         
-                    // Find the best available voice
+                    // Find best voice (your existing code)
                     const voices = this.speechSynthesis.getVoices();
+                    const selectedVoice = voices.find(voice => 
+                        voice.lang.includes('en') && 
+                        (voice.name.includes('Female') || voice.name.includes('Zira'))
+                    );
         
-                    // Prefer these voices in order
-                    const preferredVoices = [
-                        'Microsoft Zira - English (United States)',
-                        'Google US English',
-                        'Alex',
-                        'Samantha',
-                        'Microsoft David - English (United States)'
-                    ];
-        
-                    let selectedVoice = null;
-                    for (const preferred of preferredVoices) {
-                        selectedVoice = voices.find(voice => voice.name.includes(preferred.split(' - ')[0]));
-                        if (selectedVoice) break;
-                    }
-        
-                    // Fallback to any English voice
-                    if (!selectedVoice) {
-                        selectedVoice = voices.find(voice => 
-                            voice.lang.includes('en') && 
-                            (voice.name.includes('Female') || voice.name.includes('Woman'))
-                        );
-                    }
-            
                     if (selectedVoice) {
                         utterance.voice = selectedVoice;
                     }
         
+                    utterance.onend = () => {
+                        this.isCurrentlySpeaking = false;
+                    };
+        
                     this.speechSynthesis.speak(utterance);
+                }
+            }
+
+// Add stop method
+            stopSpeaking() {
+                if (this.speechSynthesis) {
+                    this.speechSynthesis.cancel();
+                    this.isCurrentlySpeaking = false;
+                    this.addMessage('system', '🛑 Speech stopped');
                 }
             }
             

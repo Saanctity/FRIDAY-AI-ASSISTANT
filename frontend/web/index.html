@@ -207,6 +207,13 @@
             font-weight: bold;
             transition: all 0.3s ease;
             min-width: 60px;
+            flex-shrink: 0;
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, #0f4c75, #00ff41);
+            padding: 10px 12px;
+            min-width: 50px;
         }
 
         .btn:hover {
@@ -268,6 +275,8 @@
             flex-direction: column;
             padding: 15px;
             overflow-y: auto;
+            flex-shrink: 0;
+            height: 100%;
         }
 
         .panel-section {
@@ -355,7 +364,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Mobile Responsive - CRITICAL UPDATES */
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             .friday-header {
                 padding: 12px;
@@ -371,22 +380,25 @@
             
             .main-content {
                 flex-direction: column;
-            }
-            
-            .chat-section {
-                order: 2;
-                padding: 8px;
-                flex: 1;
+                height: calc(100vh - 80px);
             }
             
             .side-panel {
-                order: 1;
                 width: 100%;
-                max-height: 180px;
+                height: 200px;
                 padding: 10px;
                 border-left: none;
                 border-bottom: 1px solid #16213e;
                 flex-shrink: 0;
+                overflow-y: auto;
+            }
+            
+            .chat-section {
+                flex: 1;
+                padding: 8px;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
             }
             
             .panel-section {
@@ -401,25 +413,41 @@
             
             .input-area {
                 padding: 8px;
-                gap: 6px;
+                gap: 4px;
+                flex-wrap: nowrap;
+                align-items: center;
             }
             
             #messageInput {
-                min-width: 150px;
+                flex: 1;
+                min-width: 0;
                 font-size: 0.85rem;
                 padding: 8px 10px;
             }
             
             .btn {
-                font-size: 0.8rem;
-                padding: 8px 12px;
-                min-width: 50px;
+                font-size: 0.75rem;
+                padding: 8px 10px;
+                min-width: 40px;
+                flex-shrink: 0;
+            }
+            
+            .btn-send {
+                padding: 8px 10px;
+                min-width: 40px;
             }
             
             .btn-voice, .btn-image {
-                width: 40px;
-                height: 40px;
-                font-size: 0.9rem;
+                width: 38px;
+                height: 38px;
+                font-size: 0.85rem;
+                flex-shrink: 0;
+            }
+            
+            .btn-stop {
+                font-size: 0.7rem;
+                padding: 8px;
+                min-width: 35px;
             }
             
             .message-content {
@@ -435,7 +463,6 @@
                 font-size: 0.8rem;
             }
             
-            /* Make system info more compact on mobile */
             #systemInfo {
                 font-size: 0.7rem !important;
                 line-height: 1.2 !important;
@@ -461,23 +488,35 @@
             }
             
             .side-panel {
-                max-height: 120px;
+                height: 160px;
             }
             
             .input-area {
-                flex-wrap: wrap;
-                gap: 4px;
+                padding: 6px;
+                gap: 3px;
             }
             
             #messageInput {
-                width: 100%;
-                order: 1;
-                margin-bottom: 8px;
+                font-size: 0.8rem;
+                padding: 8px;
             }
             
-            .btn-voice, .btn-image, .btn-stop, .btn {
-                order: 2;
-                margin: 2px;
+            .btn {
+                font-size: 0.7rem;
+                padding: 6px 8px;
+                min-width: 35px;
+            }
+            
+            .btn-voice, .btn-image {
+                width: 35px;
+                height: 35px;
+                font-size: 0.8rem;
+            }
+            
+            .btn-stop {
+                font-size: 0.65rem;
+                padding: 6px;
+                min-width: 30px;
             }
         }
 
@@ -499,7 +538,7 @@
         /* Landscape mobile */
         @media (max-height: 600px) and (orientation: landscape) {
             .side-panel {
-                max-height: 100px;
+                height: 100px;
             }
             
             .friday-header {
@@ -532,8 +571,8 @@
                 
                 <div class="input-area">
                     <input type="text" id="messageInput" placeholder="Ask FRIDAY anything..." autocomplete="off">
-                    <button id="sendBtn" class="btn">Send</button>
-                    <button id="stopBtn" class="btn btn-stop">🛑 Stop</button>
+                    <button id="sendBtn" class="btn btn-send">📤</button>
+                    <button id="stopBtn" class="btn btn-stop">🛑</button>
                     <button id="voiceBtn" class="btn btn-voice">🎤</button>
                     <input type="file" id="imageInput" accept="image/*" style="display: none;">
                     <button id="imageBtn" class="btn btn-image">📷</button>
@@ -921,7 +960,7 @@
                 }
             }
 
-// Add stop method
+            // Add stop method
             stopSpeaking() {
                 if (this.speechSynthesis) {
                     this.speechSynthesis.cancel();

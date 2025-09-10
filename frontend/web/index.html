@@ -58,6 +58,7 @@
             display: flex;
             flex: 1;
             overflow: hidden;
+            min-width: 0;
         }
 
         /* Chat Area */
@@ -66,6 +67,8 @@
             display: flex;
             flex-direction: column;
             padding: 10px;
+            min-width: 0; 
+            overflow: hidden;
         }
 
         .chat-area {
@@ -270,6 +273,7 @@
         .side-panel {
             width: 320px;
             min-width: 320px;
+            max-width: 320px;
             background: rgba(16, 21, 62, 0.9);
             border-left: 1px solid #16213e;
             display: flex;

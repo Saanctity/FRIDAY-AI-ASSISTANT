@@ -33,6 +33,7 @@
             border-bottom: 2px solid #00ff41;
             box-shadow: 0 4px 20px rgba(0, 255, 65, 0.3);
             flex-shrink: 0;
+            position: relative;
         }
 
         .friday-header h1 {
@@ -53,15 +54,38 @@
             font-size: 0.9rem;
         }
 
+        /* Drawer Toggle Button */
+        .drawer-toggle {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #0f4c75, #00ff41);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .drawer-toggle:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+        }
+
         /* Main Content */
         .main-content {
             display: flex;
             flex: 1;
             overflow: hidden;
             min-height: 0;
+            position: relative;
         }
 
-        /* Chat Area */
+        /* Chat Area - Now Full Width */
         .chat-section {
             flex: 1;
             display: flex;
@@ -198,13 +222,17 @@
             background: linear-gradient(135deg, #0f4c75, #00ff41);
             border: none;
             color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 12px 16px;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             transition: all 0.3s ease;
-            min-width: 80px;
+            min-width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn:hover {
@@ -218,11 +246,6 @@
 
         .btn-voice {
             background: linear-gradient(135deg, #ff6b6b, #ff4757);
-            font-size: 1.2rem;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            padding: 0;
         }
 
         .btn-voice.recording {
@@ -242,31 +265,79 @@
 
         .btn-image {
             background: linear-gradient(135deg, #0f4c75, #16213e);
-            font-size: 1.2rem;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            padding: 0;
         }
 
-        /* Redesigned Creative Side Panel */
+        /* Side Panel - Hidden by default */
         .side-panel {
+            position: fixed;
+            top: 0;
+            right: -350px;
             width: 350px;
+            height: 100vh;
             background: linear-gradient(180deg, rgba(16, 21, 62, 0.95), rgba(10, 15, 30, 0.95));
             border-left: 1px solid #16213e;
             display: flex;
             flex-direction: column;
             padding: 0;
             overflow-y: auto;
-            flex-shrink: 0;
             backdrop-filter: blur(15px);
             box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3);
+            transition: right 0.3s ease;
+            z-index: 999;
         }
 
-        /* Status Card - Modern Design */
+        .side-panel.open {
+            right: 0;
+        }
+
+        /* Close button for side panel */
+        .panel-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .panel-close:hover {
+            background: rgba(255, 68, 68, 0.4);
+            transform: scale(1.1);
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Status Card */
         .status-card {
             background: linear-gradient(135deg, rgba(15, 76, 117, 0.3), rgba(0, 255, 65, 0.1));
-            margin: 20px 15px;
+            margin: 80px 15px 20px 15px;
             padding: 20px;
             border-radius: 15px;
             border: 1px solid rgba(0, 255, 65, 0.3);
@@ -381,54 +452,6 @@
             font-weight: 500;
         }
 
-        /* Image Upload Card */
-        .upload-card {
-            background: rgba(22, 33, 62, 0.6);
-            margin: 0 15px 20px 15px;
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid #16213e;
-        }
-
-        .upload-card h3 {
-            color: #FFA726;
-            font-size: 1rem;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .image-upload-area {
-            border: 2px dashed #16213e;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(15, 76, 117, 0.1);
-        }
-
-        .image-upload-area:hover {
-            border-color: #00ff41;
-            background: rgba(0, 255, 65, 0.05);
-            transform: scale(1.02);
-        }
-
-        .image-upload-area p {
-            font-size: 0.85rem;
-            margin: 0;
-            color: #b0b0b0;
-        }
-
-        .image-preview {
-            max-width: 100%;
-            max-height: 120px;
-            border-radius: 8px;
-            margin-top: 10px;
-            border: 2px solid #00ff41;
-        }
-
         /* Controls Card */
         .controls-card {
             background: rgba(22, 33, 62, 0.6);
@@ -508,52 +531,51 @@
                 font-size: 2rem;
             }
             
-            .main-content {
-                flex-direction: column-reverse;
+            .drawer-toggle {
+                right: 15px;
+                padding: 10px;
+                font-size: 1rem;
             }
-            
+
             .side-panel {
                 width: 100%;
-                height: auto;
-                max-height: 200px;
-                border-left: none;
-                border-top: 1px solid #16213e;
-                overflow-x: auto;
-                overflow-y: hidden;
-                display: flex;
-                flex-direction: row;
+                right: -100%;
+            }
+
+            .overlay.active {
+                display: block;
+            }
+
+            .chat-section {
                 padding: 15px;
-                gap: 15px;
             }
-            
-            .status-card, .system-card, .upload-card, .controls-card, .time-display {
-                margin: 0;
-                min-width: 250px;
-                flex-shrink: 0;
+
+            .input-area {
+                flex-wrap: nowrap;
+                gap: 8px;
+                padding: 12px;
             }
-            
+
+            .btn {
+                min-width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+
+            #messageInput {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+
             .system-grid {
                 grid-template-columns: 1fr;
                 gap: 8px;
             }
-            
+
             .control-btn {
                 padding: 10px 15px;
                 font-size: 0.8rem;
                 margin-bottom: 8px;
-            }
-            
-            .chat-section {
-                padding: 15px;
-            }
-            
-            .input-area {
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-            
-            #messageInput {
-                min-width: 200px;
             }
         }
 
@@ -562,18 +584,24 @@
                 font-size: 1.6rem;
             }
             
-            .side-panel {
-                padding: 10px;
-                gap: 10px;
-            }
-            
-            .status-card, .system-card, .upload-card, .controls-card, .time-display {
-                min-width: 200px;
-                padding: 15px;
-            }
-            
             .chat-section {
                 padding: 10px;
+            }
+
+            .input-area {
+                padding: 10px;
+                gap: 6px;
+            }
+
+            .btn {
+                min-width: 40px;
+                height: 40px;
+                font-size: 0.9rem;
+            }
+
+            .status-card, .system-card, .controls-card, .time-display {
+                margin: 80px 10px 15px 10px;
+                padding: 15px;
             }
         }
 
@@ -589,6 +617,7 @@
         <header class="friday-header">
             <h1>🤖 F.R.I.D.A.Y</h1>
             <p>Female Replacement Intelligent Digital Assistant Youth</p>
+            <button id="drawerToggle" class="drawer-toggle">☰</button>
         </header>
         
         <div class="main-content">
@@ -599,15 +628,20 @@
                 
                 <div class="input-area">
                     <input type="text" id="messageInput" placeholder="Ask FRIDAY anything..." autocomplete="off">
-                    <button id="sendBtn" class="btn btn-send">📤</button>
-                    <button id="stopBtn" class="btn btn-stop">🛑</button>
+                    <button id="sendStopBtn" class="btn">📤</button>
                     <button id="voiceBtn" class="btn btn-voice">🎤</button>
                     <input type="file" id="imageInput" accept="image/*" style="display: none;">
                     <button id="imageBtn" class="btn btn-image">📷</button>
                 </div>
             </div>
             
-            <div class="side-panel">
+            <!-- Overlay for mobile -->
+            <div id="overlay" class="overlay"></div>
+            
+            <!-- Side Panel -->
+            <div id="sidePanel" class="side-panel">
+                <button id="panelClose" class="panel-close">✕</button>
+                
                 <!-- Status Card -->
                 <div class="status-card">
                     <h3>⚡ Status</h3>
@@ -646,16 +680,6 @@
                     </div>
                 </div>
 
-                <!-- Image Upload Card -->
-                <div class="upload-card">
-                    <h3>📷 Visual Analysis</h3>
-                    <div class="image-upload-area" id="imageUploadArea">
-                        <p>Drop image or click to upload</p>
-                        <p style="font-size: 0.7rem; margin-top: 5px; color: #666;">JPG, PNG, WebP supported</p>
-                    </div>
-                    <div id="imagePreviewContainer"></div>
-                </div>
-
                 <!-- Controls Card -->
                 <div class="controls-card">
                     <h3>🎛️ Quick Actions</h3>
@@ -676,27 +700,28 @@
             constructor() {
                 this.apiUrl = 'https://friday-ai-assistant.onrender.com';
                 this.isRecording = false;
+                this.isSending = false;
                 this.recognition = null;
                 this.speechSynthesis = window.speechSynthesis;
                 
                 this.init();
             }
             
-            // Update your init() method
             init() {
                 this.setupEventListeners();
                 this.setupSpeechRecognition();
-                this.setupWakeWordDetection(); // Add this line
+                this.setupWakeWordDetection();
                 this.updateStatus('FRIDAY Web is ready!');
                 this.checkAPIConnection();
                 this.updateSystemInfo();
                 this.addWelcomeMessage();
                 this.isCurrentlySpeaking = false;
-    
+
                 // Update time every second
                 setInterval(() => this.updateTime(), 1000);
-    
-                // Load voices (important for better TTS)
+                this.updateTime();
+
+                // Load voices
                 if (this.speechSynthesis) {
                     this.speechSynthesis.addEventListener('voiceschanged', () => {
                         console.log('Voices loaded:', this.speechSynthesis.getVoices().length);
@@ -705,10 +730,17 @@
             }            
             
             setupEventListeners() {
-                // Send message
-                document.getElementById('sendBtn').addEventListener('click', () => this.sendMessage());
+                // Send/Stop button (dynamic functionality)
+                document.getElementById('sendStopBtn').addEventListener('click', () => {
+                    if (this.isSending) {
+                        this.stopCurrentAction();
+                    } else {
+                        this.sendMessage();
+                    }
+                });
+                
                 document.getElementById('messageInput').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.sendMessage();
+                    if (e.key === 'Enter' && !this.isSending) this.sendMessage();
                 });
                 
                 // Voice recording
@@ -719,29 +751,74 @@
                     document.getElementById('imageInput').click();
                 });
                 
-                document.getElementById('imageUploadArea').addEventListener('click', () => {
-                    document.getElementById('imageInput').click();
-                });
-
-                document.getElementById('stopBtn').addEventListener('click', () => this.stopSpeaking());
-                
                 document.getElementById('imageInput').addEventListener('change', (e) => this.handleImageUpload(e));
                 
-                // Controls
+                // Side panel controls
+                document.getElementById('drawerToggle').addEventListener('click', () => this.toggleSidePanel());
+                document.getElementById('panelClose').addEventListener('click', () => this.closeSidePanel());
+                document.getElementById('overlay').addEventListener('click', () => this.closeSidePanel());
+                
+                // Panel controls
                 document.getElementById('clearChatBtn').addEventListener('click', () => this.clearChat());
                 document.getElementById('testConnectionBtn').addEventListener('click', () => this.testConnection());
             }
+
+            toggleSidePanel() {
+                const panel = document.getElementById('sidePanel');
+                const overlay = document.getElementById('overlay');
+                
+                panel.classList.toggle('open');
+                
+                if (window.innerWidth <= 768) {
+                    overlay.classList.toggle('active');
+                }
+            }
+
+            closeSidePanel() {
+                document.getElementById('sidePanel').classList.remove('open');
+                document.getElementById('overlay').classList.remove('active');
+            }
+
+            setSendStopButton(isSending) {
+                const btn = document.getElementById('sendStopBtn');
+                this.isSending = isSending;
+                
+                if (isSending) {
+                    btn.textContent = '🛑';
+                    btn.className = 'btn btn-stop';
+                    btn.title = 'Stop';
+                } else {
+                    btn.textContent = '📤';
+                    btn.className = 'btn';
+                    btn.title = 'Send';
+                }
+            }
+
+            stopCurrentAction() {
+                // Stop speech synthesis
+                if (this.speechSynthesis) {
+                    this.speechSynthesis.cancel();
+                    this.isCurrentlySpeaking = false;
+                }
+                
+                // Stop voice recording
+                if (this.isRecording && this.recognition) {
+                    this.recognition.stop();
+                }
+                
+                this.setSendStopButton(false);
+                this.addMessage('system', '🛑 Action stopped');
+                this.updateStatus('Ready');
+            }
             
-            // Add to your FRIDAYWebApp class in index.html
             setupWakeWordDetection() {
                 if (!this.recognition) return;
-    
-                // Continuous wake word listening
+
                 this.wakeWordRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
                 this.wakeWordRecognition.continuous = true;
                 this.wakeWordRecognition.interimResults = true;
                 this.wakeWordRecognition.lang = 'en-US';
-    
+
                 this.wakeWordRecognition.onresult = (event) => {
                     for (let i = event.resultIndex; i < event.results.length; i++) {
                         const transcript = event.results[i][0].transcript.toLowerCase();
@@ -752,13 +829,12 @@
                         }
                     }
                 };
-    
+
                 this.wakeWordRecognition.onerror = (event) => {
                     console.log('Wake word detection error:', event.error);
-                    // Restart wake word detection
-        setTimeout(() => this.startWakeWordDetection(), 1000);
+                    setTimeout(() => this.startWakeWordDetection(), 1000);
                 };
-    
+
                 this.startWakeWordDetection();
             }
 
@@ -770,13 +846,11 @@
             }
 
             onWakeWordDetected() {
-                // Prevent multiple triggers
                 if (this.isRecording) return;
-    
+
                 this.addMessage('system', '🎯 Wake word detected - listening for command...');
                 this.wakeWordRecognition.stop();
-    
-                // Start command recording
+
                 setTimeout(() => {
                     this.toggleVoiceRecording();
                 }, 500);
@@ -790,17 +864,15 @@
                     this.recognition.interimResults = false;
                     this.recognition.lang = 'en-US';
                     
-                    // Update your existing onresult handler
                     this.recognition.onresult = (event) => {
                         const transcript = event.results[0][0].transcript.toLowerCase();
-    
-                        // Check for stop command
-                         if (transcript.includes('friday stop') || transcript.includes('stop friday')) {
+
+                        if (transcript.includes('friday stop') || transcript.includes('stop friday')) {
                             this.recognition.stop();
                             this.speechSynthesis.cancel();
                             return;
                         }
-    
+
                         this.addMessage('user', `🎤 ${transcript}`);
                         this.processMessage(transcript);
                     };
@@ -826,7 +898,7 @@
                 const input = document.getElementById('messageInput');
                 const message = input.value.trim();
                 
-                if (!message) return;
+                if (!message || this.isSending) return;
                 
                 input.value = '';
                 this.addMessage('user', message);
@@ -834,6 +906,7 @@
             }
             
             async processMessage(message) {
+                this.setSendStopButton(true);
                 this.updateStatus('FRIDAY is thinking...');
                 
                 try {
@@ -858,34 +931,32 @@
                     this.addMessage('system', `Connection error: ${error.message}`);
                 }
                 
+                this.setSendStopButton(false);
                 this.updateStatus('Ready');
             }
 
-            // Add this method to your FRIDAYWebApp class
             updateTime() {
                 const now = new Date();
                 document.getElementById('currentTime').textContent = now.toLocaleTimeString();
                 document.getElementById('currentDate').textContent = now.toLocaleDateString();
             }
             
-            // Update your existing toggleVoiceRecording method
             toggleVoiceRecording() {
                 if (!this.recognition) {
                     this.addMessage('system', 'Speech recognition not supported in this browser');
                     return;
                 }
-    
+
                 if (this.isRecording) {
                     this.recognition.stop();
                 } else {
                     this.isRecording = true;
                     document.getElementById('voiceBtn').classList.add('recording');
                     document.getElementById('voiceBtn').textContent = '⏹️';
-        
-                    // Set up stop command detection
+
                     this.recognition.continuous = true;
                     this.recognition.interimResults = true;
-        
+
                     this.recognition.onresult = (event) => {
                         let finalTranscript = '';
                         let interimTranscript = '';
@@ -899,11 +970,10 @@
                                 interimTranscript += transcript;
                             }
                 
-                            // Check for stop command in real-time
                             const fullTranscript = (finalTranscript + interimTranscript).toLowerCase();
                             if (fullTranscript.includes('friday stop') || fullTranscript.includes('stop friday')) {
                                 this.recognition.stop();
-                                this.speechSynthesis.cancel(); // Stop any current speech
+                                this.speechSynthesis.cancel();
                                 this.addMessage('system', 'Recording stopped by voice command');
                                 return;
                             }
@@ -912,118 +982,102 @@
                         if (finalTranscript) {
                             this.addMessage('user', `🎤 ${finalTranscript}`);
                             this.processMessage(finalTranscript);
-                            this.recognition.stop(); // Stop after getting final result
+                            this.recognition.stop();
                         }
                     };
-        
+
                     this.recognition.start();
                     this.updateStatus('Listening... (say "Friday stop" to stop)');
                 }
             }            
             
             async handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-    
-            // Validate file size (max 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                this.addMessage('system', 'Image too large. Please use images smaller than 5MB.');
-                return;
-            }
-    
-            // Show preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const preview = document.getElementById('imagePreviewContainer');
-                preview.innerHTML = `<img src="${e.target.result}" class="image-preview" alt="Uploaded image">`;
-            };
-            reader.readAsDataURL(file);
-    
-            // Ask for analysis question
-            const question = prompt('What would you like me to analyze about this image?', 'What do you see in this image?');
-            if (!question) return;
-    
-            this.addMessage('user', `📷 ${question}`);
-            this.updateStatus('Analyzing image...');
-    
-            try {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('question', question);
-        
-                // Add timeout and better error handling
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-        
-                const response = await fetch(`${this.apiUrl}/api/analyze-image`, {
-                    method: 'POST',
-                    body: formData,
-                    signal: controller.signal
-                });
-        
-                clearTimeout(timeoutId);
-        
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Server error: ${response.status} - ${errorText}`);
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (file.size > 5 * 1024 * 1024) {
+                    this.addMessage('system', 'Image too large. Please use images smaller than 5MB.');
+                    return;
                 }
-        
-                const data = await response.json();
-                this.addMessage('friday', data.response);
-                this.speak(data.response);
-        
-            } catch (error) {
-                console.error('Image analysis error:', error);
-                let errorMsg = 'Image analysis failed';
-        
-                if (error.name === 'AbortError') {
-                    errorMsg = 'Image analysis timed out. Try with a smaller image.';
-                } else if (error.message.includes('Failed to fetch')) {
-                    errorMsg = 'Connection error. Check your internet connection.';
-                } else {
-                    errorMsg = `Image analysis failed: ${error.message}`;
+
+                const question = prompt('What would you like me to analyze about this image?', 'What do you see in this image?');
+                if (!question) return;
+
+                this.addMessage('user', `📷 ${question}`);
+                this.setSendStopButton(true);
+                this.updateStatus('Analyzing image...');
+
+                try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('question', question);
+
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+                    const response = await fetch(`${this.apiUrl}/api/analyze-image`, {
+                        method: 'POST',
+                        body: formData,
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timeoutId);
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Server error: ${response.status} - ${errorText}`);
+                    }
+
+                    const data = await response.json();
+                    this.addMessage('friday', data.response);
+                    this.speak(data.response);
+
+                } catch (error) {
+                    console.error('Image analysis error:', error);
+                    let errorMsg = 'Image analysis failed';
+
+                    if (error.name === 'AbortError') {
+                        errorMsg = 'Image analysis timed out. Try with a smaller image.';
+                    } else if (error.message.includes('Failed to fetch')) {
+                        errorMsg = 'Connection error. Check your internet connection.';
+                    } else {
+                        errorMsg = `Image analysis failed: ${error.message}`;
+                    }
+
+                    this.addMessage('system', errorMsg);
                 }
-        
-                this.addMessage('system', errorMsg);
+
+                this.setSendStopButton(false);
+                this.updateStatus('Ready');
             }
-    
-            this.updateStatus('Ready');            }
             
             speak(text) {
                 if (this.speechSynthesis && text) {
                     this.speechSynthesis.cancel();
                     this.isCurrentlySpeaking = true;
-        
+                    this.setSendStopButton(true);
+
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.rate = 0.85;
                     utterance.pitch = 1.1;
                     utterance.volume = 0.9;
-        
-                    // Find best voice (your existing code)
+
                     const voices = this.speechSynthesis.getVoices();
                     const selectedVoice = voices.find(voice => 
                         voice.lang.includes('en') && 
                         (voice.name.includes('Female') || voice.name.includes('Zira'))
                     );
-        
+
                     if (selectedVoice) {
                         utterance.voice = selectedVoice;
                     }
-        
+
                     utterance.onend = () => {
                         this.isCurrentlySpeaking = false;
+                        this.setSendStopButton(false);
                     };
-        
-                    this.speechSynthesis.speak(utterance);
-                }
-            }
 
-            // Add stop method
-            stopSpeaking() {
-                if (this.speechSynthesis) {
-                    this.speechSynthesis.cancel();
-                    this.isCurrentlySpeaking = false;
-                    this.addMessage('system', '🛑 Speech stopped');
+                    this.speechSynthesis.speak(utterance);
                 }
             }
             
@@ -1065,8 +1119,6 @@
                 setTimeout(() => {
                     const welcomeMsg = 'Hello! FRIDAY Web is online and ready to assist. I can help with conversations, image analysis, and web-based tasks. How can I help you today?';
                     this.addMessage('friday', welcomeMsg);
-        
-                    // Speak the welcome message
                     this.speak(welcomeMsg);
                 }, 1000);
             }
@@ -1082,16 +1134,9 @@
                 document.getElementById('statusText').textContent = status;
             }
             
-            updateTime() {
-                const now = new Date();
-                document.getElementById('currentTime').textContent = now.toLocaleTimeString();
-            }
-            
             updateSystemInfo() {
-                // Update system information periodically
                 setInterval(() => {
-                    const info = document.getElementById('systemInfo');
-                    // You can add more dynamic info here
+                    // Update system information periodically if needed
                 }, 5000);
             }
             

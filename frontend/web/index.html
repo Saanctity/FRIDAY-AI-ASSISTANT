@@ -76,6 +76,11 @@
             box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
         }
 
+        .drawer-toggle.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         /* Main Content */
         .main-content {
             display: flex;
@@ -398,6 +403,8 @@
             font-size: 0.9rem;
             color: #ffffff;
             font-weight: 500;
+            font-size: 0.9rem;
+            line-height: 1.4;
         }
 
         /* System Info Card */
@@ -711,6 +718,7 @@
                 this.setupEventListeners();
                 this.setupSpeechRecognition();
                 this.setupWakeWordDetection();
+                this.setSendStopButton(false); // Initialize as send button
                 this.updateStatus('FRIDAY Web is ready!');
                 this.checkAPIConnection();
                 this.updateSystemInfo();
@@ -766,17 +774,31 @@
             toggleSidePanel() {
                 const panel = document.getElementById('sidePanel');
                 const overlay = document.getElementById('overlay');
-                
+                const toggle = document.getElementById('drawerToggle');
+    
+                const isOpening = !panel.classList.contains('open');
                 panel.classList.toggle('open');
-                
+    
+                // Hide/show hamburger button
+                if (isOpening) {
+                    toggle.classList.add('hidden');
+                } else {
+                    toggle.classList.remove('hidden');
+                }
+    
                 if (window.innerWidth <= 768) {
                     overlay.classList.toggle('active');
                 }
             }
 
             closeSidePanel() {
-                document.getElementById('sidePanel').classList.remove('open');
-                document.getElementById('overlay').classList.remove('active');
+                const panel = document.getElementById('sidePanel');
+                const overlay = document.getElementById('overlay');
+                const toggle = document.getElementById('drawerToggle');
+    
+                panel.classList.remove('open');
+                overlay.classList.remove('active');
+                toggle.classList.remove('hidden');
             }
 
             setSendStopButton(isSending) {
@@ -1057,27 +1079,32 @@
                     this.isCurrentlySpeaking = true;
                     this.setSendStopButton(true);
 
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.rate = 0.85;
-                    utterance.pitch = 1.1;
-                    utterance.volume = 0.9;
+                    setTimeout(() => {
+                        this.isCurrentlySpeaking = true;
+                        this.setSendStopButton(true);
 
-                    const voices = this.speechSynthesis.getVoices();
-                    const selectedVoice = voices.find(voice => 
-                        voice.lang.includes('en') && 
-                        (voice.name.includes('Female') || voice.name.includes('Zira'))
-                    );
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        utterance.rate = 0.85;
+                        utterance.pitch = 1.1;
+                        utterance.volume = 0.9;
 
-                    if (selectedVoice) {
-                        utterance.voice = selectedVoice;
-                    }
+                        const voices = this.speechSynthesis.getVoices();
+                        const selectedVoice = voices.find(voice => 
+                            voice.lang.includes('en') && 
+                            (voice.name.includes('Female') || voice.name.includes('Zira'))
+                        );
 
-                    utterance.onend = () => {
-                        this.isCurrentlySpeaking = false;
-                        this.setSendStopButton(false);
-                    };
+                        if (selectedVoice) {
+                            utterance.voice = selectedVoice;
+                        }
 
-                    this.speechSynthesis.speak(utterance);
+                        utterance.onend = () => {
+                            this.isCurrentlySpeaking = false;
+                            this.setSendStopButton(false);
+                        };
+
+                        this.speechSynthesis.speak(utterance);
+                    }, 100);
                 }
             }
             
@@ -1117,9 +1144,13 @@
             
             addWelcomeMessage() {
                 setTimeout(() => {
-                    const welcomeMsg = 'Hello! FRIDAY Web is online and ready to assist. I can help with conversations, image analysis, and web-based tasks. How can I help you today?';
+                    const welcomeMsg = "Good day! I'm FRIDAY, your Female Replacement Intelligent Digital Assistant Youth. I've successfully initialized all my systems and I'm now fully operational. I can assist you with conversations, analyze images, provide information, and handle various digital tasks. My neural networks are optimized and ready to serve. How may I be of assistance today?";
                     this.addMessage('friday', welcomeMsg);
-                    this.speak(welcomeMsg);
+        
+                    // Ensure speech synthesis is ready before speaking
+                    setTimeout(() => {
+                        this.speak(welcomeMsg);
+                    }, 500);
                 }, 1000);
             }
             

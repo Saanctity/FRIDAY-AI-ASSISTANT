@@ -46,11 +46,12 @@
             position: relative;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center; /* Centered on desktop */
+            text-align: center;
         }
 
         .friday-header .title-section {
-            text-align: left;
+            text-align: center;
             flex: 1;
         }
 
@@ -591,10 +592,18 @@
             .friday-header {
                 padding: 8px 15px;
                 flex-shrink: 0;
+                justify-content: flex-start; /* Left align on mobile */
+                text-align: left;
             }
     
             .friday-header h1 {
                 font-size: 1.6rem;
+            }
+
+            .friday-header .title-section {
+                text-align: left;
+                flex: 1;
+                margin-right: 15px; /* Add space before hamburger */
             }
     
             .friday-header p {

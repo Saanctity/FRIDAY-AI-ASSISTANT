@@ -1169,14 +1169,26 @@
             
             addWelcomeMessage() {
                 setTimeout(() => {
-                    const welcomeMsg = "Good day! I'm FRIDAY, your Female Replacement Intelligent Digital Assistant Youth. I've successfully initialized all my systems and I'm now fully operational. I can assist you with conversations, analyze images, provide information, and handle various digital tasks. My neural networks are optimized and ready to serve. How may I be of assistance today?";
+                    const welcomeMsg = "Good day! I'm FRIDAY, your Female Replacement Intelligent Digital Assistant Youth. I've successfully initialized all my systems and I'm now fully operational. How may I be of assistance today?";
                     this.addMessage('friday', welcomeMsg);
         
-                    // Ensure speech synthesis is ready before speaking
+                    // Force speech after a longer delay and user interaction check
                     setTimeout(() => {
-                        this.speak(welcomeMsg);
-                    }, 500);
-                }, 1000);
+                        // Check if user has interacted with page (some browsers block autoplay)
+                        if (document.hasFocus()) {
+                            this.speak(welcomeMsg);
+                        } else {
+                            // Wait for first user interaction
+                            const enableSpeech = () => {
+                                this.speak(welcomeMsg);
+                                document.removeEventListener('click', enableSpeech);
+                                document.removeEventListener('keydown', enableSpeech);
+                            };
+                            document.addEventListener('click', enableSpeech);
+                            document.addEventListener('keydown', enableSpeech);
+                        }
+                    }, 1000);
+                }, 1500);
             }
             
             clearChat() {

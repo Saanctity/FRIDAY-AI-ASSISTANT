@@ -23,6 +23,9 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            height: 100dvh; /* Dynamic viewport height for mobile */
+            min-height: 100vh;
+            overflow: hidden;
         }
 
         /* Header */
@@ -535,95 +538,100 @@
             color: #b0b0b0;
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .friday-header {
-                padding: 15px;
-            }
-            
-            .friday-header h1 {
-                font-size: 2rem;
-            }
-            
-            .drawer-toggle {
-                right: 15px;
-                padding: 10px;
-                font-size: 1rem;
-            }
-
-            .side-panel {
-                width: 100%;
-                right: -100%;
-            }
-
-            .overlay.active {
-                display: block;
-            }
-
-            .chat-section {
-                padding: 15px;
-            }
-
-            .input-area {
-                flex-wrap: nowrap;
-                gap: 8px;
-                padding: 12px;
-            }
-
-            .btn {
-                min-width: 45px;
-                height: 45px;
-                font-size: 1rem;
-            }
-
-            #messageInput {
-                padding: 10px 12px;
-                font-size: 0.95rem;
-            }
-
-            .system-grid {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-
-            .control-btn {
-                padding: 10px 15px;
-                font-size: 0.8rem;
-                margin-bottom: 8px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .friday-header h1 {
-                font-size: 1.6rem;
-            }
-            
-            .chat-section {
-                padding: 10px;
-            }
-
-            .input-area {
-                padding: 10px;
-                gap: 6px;
-            }
-
-            .btn {
-                min-width: 40px;
-                height: 40px;
-                font-size: 0.9rem;
-            }
-
-            .status-card, .system-card, .controls-card, .time-display {
-                margin: 80px 10px 15px 10px;
-                padding: 15px;
-            }
-        }
-
         /* Hide scrollbar for webkit browsers */
         .chat-area {
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        @media (max-width: 768px) {
+            .friday-header {
+                padding: 10px 15px;
+            }
+    
+            .friday-header h1 {
+                font-size: 1.8rem;
+            }
+    
+            .main-content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+            }
+    
+            .chat-section {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                padding: 10px;
+                min-height: 0;
+            }
+    
+            .chat-area {
+                flex: 1;
+                margin-bottom: 10px;
+                padding: 15px;
+                min-height: 200px;
+            }
+    
+            .input-area {
+                padding: 10px;
+                gap: 8px;
+                margin-bottom: env(safe-area-inset-bottom, 0px);
+                position: sticky;
+                bottom: 0;
+                background: rgba(22, 33, 62, 0.95);
+                backdrop-filter: blur(10px);
+            }
+    
+            .side-panel {
+                padding: 10px 0;
+                height: 100vh;
+                height: 100dvh;
+                overflow-y: auto;
+            }
+    
+            .status-card, .system-card, .controls-card, .time-display {
+                margin: 10px 10px 15px 10px;
+                padding: 15px;
+            }
+    
+            .system-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+    
+        .control-btn {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chat-section {
+                padding: 8px;
+            }
+    
+            .input-area {
+                padding: 8px;
+                gap: 6px;
+            }
+    
+            .btn {
+                min-width: 42px;
+                height: 42px;
+                font-size: 1rem;
+                padding: 8px;
+            }
+    
+            #messageInput {
+                padding: 10px 12px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }  
+
     </style>
 </head>
 <body>
@@ -1172,22 +1180,20 @@
                     const welcomeMsg = "Good day! I'm FRIDAY, your Female Replacement Intelligent Digital Assistant Youth. I've successfully initialized all my systems and I'm now fully operational. How may I be of assistance today?";
                     this.addMessage('friday', welcomeMsg);
         
-                    // Force speech after a longer delay and user interaction check
-                    setTimeout(() => {
-                        // Check if user has interacted with page (some browsers block autoplay)
-                        if (document.hasFocus()) {
-                            this.speak(welcomeMsg);
-                        } else {
-                            // Wait for first user interaction
-                            const enableSpeech = () => {
-                                this.speak(welcomeMsg);
-                                document.removeEventListener('click', enableSpeech);
-                                document.removeEventListener('keydown', enableSpeech);
-                            };
-                            document.addEventListener('click', enableSpeech);
-                            document.addEventListener('keydown', enableSpeech);
-                        }
-                    }, 1000);
+                    // Create a click listener to enable speech on first interaction
+                    const enableSpeechOnInteraction = () => {
+                        this.speak(welcomeMsg);
+                        document.removeEventListener('click', enableSpeechOnInteraction);
+                        document.removeEventListener('touchstart', enableSpeechOnInteraction);
+                    };
+        
+                    // Try immediate speech, fallback to user interaction
+                    try {
+                        this.speak(welcomeMsg);
+                    } catch (e) {
+                        document.addEventListener('click', enableSpeechOnInteraction);
+                        document.addEventListener('touchstart', enableSpeechOnInteraction);
+                    }
                 }, 1500);
             }
             

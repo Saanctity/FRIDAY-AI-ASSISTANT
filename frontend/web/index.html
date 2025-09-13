@@ -1175,20 +1175,40 @@
                     const welcomeMsg = "Good day! I'm FRIDAY, your Female Replacement Intelligent Digital Assistant Youth. I've successfully initialized all my systems and I'm now fully operational. How may I be of assistance today?";
                     this.addMessage('friday', welcomeMsg);
         
-                    // Create a click listener to enable speech on first interaction
-                    const enableSpeechOnInteraction = () => {
+                    // Show a subtle prompt for speech
+                    this.addMessage('system', '🔊 Click anywhere to enable voice responses');
+        
+                    // Enable speech on ANY user interaction
+                    const enableSpeech = (e) => {
+                        // Remove the prompt message
+                        const systemMsgs = document.querySelectorAll('.system-message');
+                        systemMsgs.forEach(msg => {
+                            if (msg.textContent.includes('Click anywhere to enable')) {
+                                msg.remove();
+                            }
+                        });
+            
+                        // Speak the welcome message
                         this.speak(welcomeMsg);
-                        document.removeEventListener('click', enableSpeechOnInteraction);
-                        document.removeEventListener('touchstart', enableSpeechOnInteraction);
+            
+                        // Remove all event listeners
+                        document.removeEventListener('click', enableSpeech);
+                        document.removeEventListener('touchstart', enableSpeech);
+                        document.removeEventListener('keydown', enableSpeech);
+            
+                        e.stopPropagation();
                     };
         
-                    // Try immediate speech, fallback to user interaction
-                    try {
+                    // Try immediate speech first
+                    setTimeout(() => {
                         this.speak(welcomeMsg);
-                    } catch (e) {
-                        document.addEventListener('click', enableSpeechOnInteraction);
-                        document.addEventListener('touchstart', enableSpeechOnInteraction);
-                    }
+                    }, 500);
+        
+                    // Fallback: wait for user interaction
+                    document.addEventListener('click', enableSpeech);
+                    document.addEventListener('touchstart', enableSpeech);
+                    document.addEventListener('keydown', enableSpeech);
+        
                 }, 1500);
             }
             

@@ -40,11 +40,18 @@
         .friday-header {
             background: linear-gradient(135deg, #0f4c75, #16213e);
             padding: 20px;
-            text-align: center;
             border-bottom: 2px solid #00ff41;
             box-shadow: 0 4px 20px rgba(0, 255, 65, 0.3);
             flex-shrink: 0;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .friday-header .title-section {
+            text-align: left;
+            flex: 1;
         }
 
         .friday-header h1 {
@@ -52,6 +59,7 @@
             margin-bottom: 5px;
             text-shadow: 0 0 10px #00ff41;
             animation: glow 2s infinite alternate;
+            margin: 0;
         }
 
         @keyframes glow {
@@ -63,14 +71,11 @@
             font-style: italic;
             color: #b0b0b0;
             font-size: 0.9rem;
+            margin: 0;
         }
 
         /* Drawer Toggle Button */
         .drawer-toggle {
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
             background: linear-gradient(135deg, #0f4c75, #00ff41);
             border: none;
             color: white;
@@ -80,10 +85,13 @@
             font-size: 1.2rem;
             transition: all 0.3s ease;
             z-index: 1000;
+            opacity: 1;
+            position: relative;
+            flex-shrink: 0;
         }
 
         .drawer-toggle:hover {
-            transform: translateY(-50%) scale(1.1);
+            transform: scale(1.1);
             box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
         }
 
@@ -553,26 +561,31 @@
         }
 
         @media (max-width: 768px) {
-            html {
-                height: 100%;
-                height: 100svh;
+            .input-area {
+                padding: 8px;
+                gap: 4px;
+                flex-shrink: 0;
+                background: rgba(22, 33, 62, 0.98);
+                backdrop-filter: blur(15px);
+                border-top: 1px solid #16213e;
+                position: relative;
+                z-index: 10;
                 overflow: hidden;
             }
     
-            body {
-                height: 100%;
-                height: 100svh;
-                position: fixed;
-                width: 100%;
-                top: 0;
-                left: 0;
-                overflow: hidden;
+            .btn {
+                min-width: 36px;
+                height: 36px;
+                font-size: 0.9rem;
+                padding: 6px;
+                flex-shrink: 0;
             }
     
-            .container {
-                height: 100%;
-                height: 100svh;
-                max-height: 100svh;
+            #messageInput {
+                flex: 1;
+                min-width: 0;
+                padding: 8px 12px;
+                font-size: 16px;
             }
     
             .friday-header {
@@ -582,84 +595,10 @@
     
             .friday-header h1 {
                 font-size: 1.6rem;
-                margin-bottom: 2px;
             }
     
             .friday-header p {
                 font-size: 0.75rem;
-            }
-    
-            .main-content {
-                flex: 1;
-                min-height: 0;
-                display: flex;
-                flex-direction: column;
-            }
-            
-            .chat-section {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                padding: 8px;
-                min-height: 0;
-                overflow: hidden;
-            }
-    
-            .chat-area {
-                flex: 1;
-                margin-bottom: 8px;
-                padding: 12px;
-                min-height: 0;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-    
-            .input-area {
-                padding: 8px;
-                gap: 6px;
-                flex-shrink: 0;
-                background: rgba(22, 33, 62, 0.98);
-                backdrop-filter: blur(15px);
-                border-top: 1px solid #16213e;
-                position: relative;
-                z-index: 10;
-            }
-    
-            #messageInput {
-                padding: 10px 12px;
-                font-size: 16px; /* Prevents iOS zoom */
-                border-radius: 20px;
-            }
-    
-            .btn {
-                min-width: 40px;
-                height: 40px;
-                font-size: 0.95rem;
-                padding: 8px;
-            }
-    
-            .side-panel {
-                height: 100%;
-                height: 100svh;
-                padding-top: 50px;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-    
-            .status-card, .system-card, .controls-card, .time-display {
-                margin: 8px 10px 12px 10px;
-                padding: 12px;
-            }
-    
-            .system-grid {
-                grid-template-columns: 1fr;
-                gap: 6px;
-            }
-    
-            .control-btn {
-                padding: 10px 15px;
-                font-size: 0.85rem;
-                margin-bottom: 8px;
             }
         }
 
@@ -691,8 +630,10 @@
 <body>
     <div class="container">
         <header class="friday-header">
-            <h1>🤖 F.R.I.D.A.Y</h1>
-            <p>Female Replacement Intelligent Digital Assistant Youth</p>
+            <div class="title-section">
+                <h1>🤖 F.R.I.D.A.Y</h1>
+                <p>Female Replacement Intelligent Digital Assistant Youth</p>
+            </div>
             <button id="drawerToggle" class="drawer-toggle">☰</button>
         </header>
         

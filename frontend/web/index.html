@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>FRIDAY AI Assistant - Web</title>
     <style>
         * {
@@ -16,16 +16,24 @@
             background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
             color: #ffffff;
             height: 100vh;
+            height: 100svh;
             overflow: hidden;
+            margin: 0;
+            padding: 0;
+            position: fixed;
+            width: 100%;
+            overscroll-behavior: none;
         }
 
         .container {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: 100dvh; /* Dynamic viewport height for mobile */
-            min-height: 100vh;
+            height: 100svh; /* Small viewport height - excludes browser UI */
+            max-height: 100vh;
+            max-height: 100svh;
             overflow: hidden;
+            position: relative;
         }
 
         /* Header */
@@ -545,67 +553,113 @@
         }
 
         @media (max-width: 768px) {
+            html {
+                height: 100%;
+                height: 100svh;
+                overflow: hidden;
+            }
+    
+            body {
+                height: 100%;
+                height: 100svh;
+                position: fixed;
+                width: 100%;
+                top: 0;
+                left: 0;
+                overflow: hidden;
+            }
+    
+            .container {
+                height: 100%;
+                height: 100svh;
+                max-height: 100svh;
+            }
+    
             .friday-header {
-                padding: 10px 15px;
+                padding: 8px 15px;
+                flex-shrink: 0;
             }
     
             .friday-header h1 {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
+                margin-bottom: 2px;
+            }
+    
+            .friday-header p {
+                font-size: 0.75rem;
             }
     
             .main-content {
                 flex: 1;
+                min-height: 0;
                 display: flex;
                 flex-direction: column;
-                min-height: 0;
             }
-    
+            
             .chat-section {
                 flex: 1;
                 display: flex;
                 flex-direction: column;
-                padding: 10px;
+                padding: 8px;
                 min-height: 0;
+                overflow: hidden;
             }
     
             .chat-area {
                 flex: 1;
-                margin-bottom: 10px;
-                padding: 15px;
-                min-height: 200px;
+                margin-bottom: 8px;
+                padding: 12px;
+                min-height: 0;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
             }
     
             .input-area {
-                padding: 10px;
-                gap: 8px;
-                margin-bottom: env(safe-area-inset-bottom, 0px);
-                position: sticky;
-                bottom: 0;
-                background: rgba(22, 33, 62, 0.95);
-                backdrop-filter: blur(10px);
+                padding: 8px;
+                gap: 6px;
+                flex-shrink: 0;
+                background: rgba(22, 33, 62, 0.98);
+                backdrop-filter: blur(15px);
+                border-top: 1px solid #16213e;
+                position: relative;
+                z-index: 10;
+            }
+    
+            #messageInput {
+                padding: 10px 12px;
+                font-size: 16px; /* Prevents iOS zoom */
+                border-radius: 20px;
+            }
+    
+            .btn {
+                min-width: 40px;
+                height: 40px;
+                font-size: 0.95rem;
+                padding: 8px;
             }
     
             .side-panel {
-                padding: 10px 0;
-                height: 100vh;
-                height: 100dvh;
+                height: 100%;
+                height: 100svh;
+                padding-top: 50px;
                 overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
             }
     
             .status-card, .system-card, .controls-card, .time-display {
-                margin: 10px 10px 15px 10px;
-                padding: 15px;
+                margin: 8px 10px 12px 10px;
+                padding: 12px;
             }
     
             .system-grid {
                 grid-template-columns: 1fr;
-                gap: 8px;
+                gap: 6px;
             }
     
-        .control-btn {
-                padding: 12px 15px;
-                font-size: 0.9rem;
-                margin-bottom: 10px;
+            .control-btn {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+                margin-bottom: 8px;
             }
         }
 

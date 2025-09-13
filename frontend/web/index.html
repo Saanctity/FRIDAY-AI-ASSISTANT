@@ -348,6 +348,9 @@
             border: 1px solid rgba(0, 255, 65, 0.3);
             position: relative;
             overflow: hidden;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
         }
 
         .status-card::before {
@@ -382,7 +385,9 @@
             align-items: center;
             gap: 12px;
             position: relative;
-            z-index: 1;
+            z-index: 2;
+            flex-wrap: wrap;
+            margin-top: auto;
         }
 
         .status-dot {
@@ -403,8 +408,10 @@
             font-size: 0.9rem;
             color: #ffffff;
             font-weight: 500;
-            font-size: 0.9rem;
             line-height: 1.4;
+            flex: 1;
+            min-width: 0;
+            word-wrap: break-word;
         }
 
         /* System Info Card */
@@ -715,6 +722,16 @@
             }
             
             init() {
+                // Force speech synthesis to load voices
+                if (this.speechSynthesis) {
+                    this.speechSynthesis.getVoices();
+                    // Trigger voices changed event
+                    setTimeout(() => {
+                        if (this.speechSynthesis.getVoices().length === 0) {
+                            this.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+                        }
+                    }, 100);
+                }
                 this.setupEventListeners();
                 this.setupSpeechRecognition();
                 this.setupWakeWordDetection();
@@ -1076,37 +1093,45 @@
             speak(text) {
                 if (this.speechSynthesis && text) {
                     this.speechSynthesis.cancel();
-                    this.isCurrentlySpeaking = true;
-                    this.setSendStopButton(true);
-
-                    setTimeout(() => {
+        
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1.0;
+                    utterance.volume = 1.0;
+        
+                    // Try to get a female voice
+                    const voices = this.speechSynthesis.getVoices();
+                    const femaleVoice = voices.find(voice => 
+                        voice.lang.startsWith('en') && 
+                        (voice.name.toLowerCase().includes('female') || 
+                        voice.name.toLowerCase().includes('zira') ||
+                        voice.name.toLowerCase().includes('karen') ||
+                        voice.name.toLowerCase().includes('samantha'))
+                    ) || voices.find(voice => voice.lang.startsWith('en'));
+        
+                    if (femaleVoice) {
+                        utterance.voice = femaleVoice;
+                    }
+        
+                    utterance.onstart = () => {
                         this.isCurrentlySpeaking = true;
                         this.setSendStopButton(true);
-
-                        const utterance = new SpeechSynthesisUtterance(text);
-                        utterance.rate = 0.85;
-                        utterance.pitch = 1.1;
-                        utterance.volume = 0.9;
-
-                        const voices = this.speechSynthesis.getVoices();
-                        const selectedVoice = voices.find(voice => 
-                            voice.lang.includes('en') && 
-                            (voice.name.includes('Female') || voice.name.includes('Zira'))
-                        );
-
-                        if (selectedVoice) {
-                            utterance.voice = selectedVoice;
-                        }
-
-                        utterance.onend = () => {
-                            this.isCurrentlySpeaking = false;
-                            this.setSendStopButton(false);
-                        };
-
-                        this.speechSynthesis.speak(utterance);
-                    }, 100);
+                    };
+        
+                    utterance.onend = () => {
+                        this.isCurrentlySpeaking = false;
+                        this.setSendStopButton(false);
+                    };
+        
+                    utterance.onerror = (event) => {
+                        console.log('Speech error:', event.error);
+                        this.isCurrentlySpeaking = false;
+                        this.setSendStopButton(false);
+                    };
+        
+                    this.speechSynthesis.speak(utterance);
                 }
-            }
+            }            
             
             addMessage(sender, content) {
                 const chatArea = document.getElementById('chatArea');

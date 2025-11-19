@@ -54,7 +54,7 @@ class WebAIEngine:
                 return False
             
             genai.configure(api_key=api_key)
-            self.model = genai.GenerativeModel('gemini-1.5-flash-latest')
+            self.model = genai.GenerativeModel('gemini-pro')
             self.is_initialized = True
             
             logger.info("✅ FRIDAY Web AI initialized")

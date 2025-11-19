@@ -46,20 +46,35 @@ class WebAIEngine:
         """Initialize AI engine"""
         try:
             import google.generativeai as genai
-            
+        
             # Get API key from environment
             api_key = os.getenv('GEMINI_API_KEY')
             if not api_key:
                 logger.error("GEMINI_API_KEY not found in environment")
                 return False
-            
+        
             genai.configure(api_key=api_key)
-            self.model = genai.GenerativeModel('gemini-pro')
-            self.is_initialized = True
-            
-            logger.info("✅ FRIDAY Web AI initialized")
-            return True
-            
+        
+            # Try multiple model names as fallback
+            model_names = [
+                'gemini-1.5-flash-latest',
+                'gemini-1.5-flash',
+                'gemini-pro'
+            ]
+        
+            for model_name in model_names:
+                try:
+                    self.model = genai.GenerativeModel(model_name)
+                    logger.info(f"✅ Using model: {model_name}")
+                    self.is_initialized = True
+                    return True
+                except Exception as e:
+                    logger.warning(f"Model {model_name} failed: {e}")
+                    continue
+        
+            logger.error("❌ No working model found")
+            return False
+        
         except Exception as e:
             logger.error(f"❌ AI initialization error: {e}")
             return False
@@ -255,3 +270,19 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
+
+@app.get("/api/list-models")
+async def list_models():
+    try:
+        import google.generativeai as genai
+        api_key = os.getenv('GEMINI_API_KEY')
+        genai.configure(api_key=api_key)
+        
+        models = []
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                models.append(m.name)
+        
+        return {"models": models}
+    except Exception as e:
+        return {"error": str(e)}

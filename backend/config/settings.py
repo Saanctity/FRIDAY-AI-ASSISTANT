@@ -30,7 +30,7 @@ class FRIDAYSettings(BaseSettings):
     silence_duration: float = Field(1.5, env="SILENCE_DURATION")
     
     # Voice Configuration - Updated for FRIDAY
-    elevenlabs_voice_id: str = Field("kdmDKE6EkgrWrrykO9Qt", env="ELEVENLABS_VOICE_ID")
+    elevenlabs_voice_id: str = Field("EXAVITQu4vr4xnSDxMaL", env="ELEVENLABS_VOICE_ID")  # Bella voice
     wake_word_phrase: str = Field("Friday", env="WAKE_WORD_PHRASE")
     assistant_name: str = Field("FRIDAY", env="ASSISTANT_NAME")
     

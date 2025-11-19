@@ -63,43 +63,70 @@ class WebAIEngine:
         except Exception as e:
             logger.error(f"❌ AI initialization error: {e}")
             return False
+        
+    def _clean_text_for_speech(self, text: str) -> str:
+        """Clean markdown and formatting from text for TTS"""
+        import re
+    
+        # Remove markdown headers (### Header)
+        text = re.sub(r'#{1,6}\s+', '', text)
+    
+        # Remove bold/italic markers (**, *, __, _)
+        text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)  # **bold**
+        text = re.sub(r'\*([^*]+)\*', r'\1', text)      # *italic*
+        text = re.sub(r'__([^_]+)__', r'\1', text)      # __bold__
+        text = re.sub(r'_([^_]+)_', r'\1', text)        # _italic_
+    
+        # Remove code blocks (```)
+        text = re.sub(r'```[\s\S]*?```', '', text)
+        text = re.sub(r'`([^`]+)`', r'\1', text)
+    
+        # Remove bullet points and list markers
+        text = re.sub(r'^\s*[-*+]\s+', '', text, flags=re.MULTILINE)
+        text = re.sub(r'^\s*\d+\.\s+', '', text, flags=re.MULTILINE)
+    
+        # Remove extra whitespace and newlines
+        text = re.sub(r'\n{3,}', '\n\n', text)  # Max 2 newlines
+        text = re.sub(r' {2,}', ' ', text)      # Max 1 space
+    
+        return text.strip()
     
     def get_response(self, user_input: str) -> str:
         """Generate AI response with enhanced reasoning"""
         if not self.model:
             return "AI engine not initialized"
-        
+    
         try:
-            # Add to history
             self.conversation_history.append(("user", user_input))
-        
-            # MUCH SIMPLER prompt - direct conversation style
+    
+            # Updated prompt - NO MARKDOWN
             system_prompt = f"""You are FRIDAY, Tony Stark's AI assistant. You are intelligent, helpful, and conversational.
 
-IMPORTANT GUIDELINES:
-- Respond directly to the user in first person
-- Keep responses natural and conversational 
-- Don't analyze the user's request or explain your reasoning process
-- Don't refer to "the user" - speak directly to them
-- Be concise unless they ask for detailed explanations
-- Maintain FRIDAY's professional but friendly personality
+CRITICAL RULES:
+- Respond directly in plain text ONLY - NO markdown formatting
+- DO NOT use: asterisks (*), hashtags (#), underscores (_), backticks (`)
+- DO NOT use bold, italic, headers, or code blocks
+- Write naturally as if speaking out loud
+- Keep responses conversational and engaging
+- Be concise unless detailed explanation is requested
 
 User says: {user_input}
 
-Respond naturally as FRIDAY:"""
+Respond naturally as FRIDAY in plain speech:"""
 
             response = self.model.generate_content(system_prompt)
             ai_response = response.text.strip()
         
-            # Add to history
+            # Clean the response before returning
+            ai_response = self._clean_text_for_speech(ai_response)
+        
             self.conversation_history.append(("assistant", ai_response))
         
-            # Keep history manageable
             if len(self.conversation_history) > 20:
                 self.conversation_history = self.conversation_history[-20:]
         
             return ai_response
-        
+    
         except Exception as e:
             logger.error(f"AI response error: {e}")
             return "I'm experiencing technical difficulties at the moment."

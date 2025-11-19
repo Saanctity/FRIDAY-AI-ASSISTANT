@@ -46,35 +46,20 @@ class WebAIEngine:
         """Initialize AI engine"""
         try:
             import google.generativeai as genai
-        
+            
             # Get API key from environment
             api_key = os.getenv('GEMINI_API_KEY')
             if not api_key:
                 logger.error("GEMINI_API_KEY not found in environment")
                 return False
-        
+            
             genai.configure(api_key=api_key)
-        
-            # Try multiple model names as fallback
-            model_names = [
-                'gemini-1.5-flash-latest',
-                'gemini-1.5-flash',
-                'gemini-pro'
-            ]
-        
-            for model_name in model_names:
-                try:
-                    self.model = genai.GenerativeModel(model_name)
-                    logger.info(f"✅ Using model: {model_name}")
-                    self.is_initialized = True
-                    return True
-                except Exception as e:
-                    logger.warning(f"Model {model_name} failed: {e}")
-                    continue
-        
-            logger.error("❌ No working model found")
-            return False
-        
+            self.model = genai.GenerativeModel('models/gemini-flash-latest')
+            self.is_initialized = True
+            
+            logger.info("✅ FRIDAY Web AI initialized")
+            return True
+            
         except Exception as e:
             logger.error(f"❌ AI initialization error: {e}")
             return False

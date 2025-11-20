@@ -97,39 +97,72 @@ class WebAIEngine:
             return "AI engine not initialized"
     
         try:
+            # Add to history
             self.conversation_history.append(("user", user_input))
     
-            # Updated prompt - NO MARKDOWN
+            # Updated prompt to avoid markdown formatting
             system_prompt = f"""You are FRIDAY, Tony Stark's AI assistant. You are intelligent, helpful, and conversational.
 
-CRITICAL RULES:
-- Respond directly in plain text ONLY - NO markdown formatting
-- DO NOT use: asterisks (*), hashtags (#), underscores (_), backticks (`)
-- DO NOT use bold, italic, headers, or code blocks
-- Write naturally as if speaking out loud
-- Keep responses conversational and engaging
-- Be concise unless detailed explanation is requested
+CRITICAL FORMATTING RULES:
+- DO NOT use asterisks (*) or hashtags (#) in your response
+- DO NOT use markdown formatting
+- Write in plain text only with proper punctuation
+- Use simple paragraphs without special characters
+- Keep responses natural and conversational 
+- Don't refer to "the user" - speak directly to them
+- Be concise unless they ask for detailed explanations
 
 User says: {user_input}
 
-Respond naturally as FRIDAY in plain speech:"""
+Respond naturally as FRIDAY in plain text:"""
 
             response = self.model.generate_content(system_prompt)
             ai_response = response.text.strip()
         
-            # Clean the response before returning
-            ai_response = self._clean_text_for_speech(ai_response)
-        
+            # Clean markdown formatting from response
+            ai_response = self._clean_markdown(ai_response)
+    
+            # Add to history
             self.conversation_history.append(("assistant", ai_response))
-        
+    
+            # Keep history manageable
             if len(self.conversation_history) > 20:
                 self.conversation_history = self.conversation_history[-20:]
-        
+    
             return ai_response
     
         except Exception as e:
             logger.error(f"AI response error: {e}")
             return "I'm experiencing technical difficulties at the moment."
+        
+    def _clean_markdown(self, text: str) -> str:
+        """Remove markdown formatting from text"""
+        import re
+    
+        # Remove markdown headers (###, ##, #)
+        text = re.sub(r'^#{1,6}\s+', '', text, flags=re.MULTILINE)
+    
+        # Remove bold/italic markers (**, *, __)
+        text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)  # **bold**
+        text = re.sub(r'\*([^*]+)\*', r'\1', text)      # *italic*
+        text = re.sub(r'__([^_]+)__', r'\1', text)      # __bold__
+        text = re.sub(r'_([^_]+)_', r'\1', text)        # _italic_
+    
+        # Remove remaining asterisks and hashes
+        text = text.replace('*', '').replace('#', '')
+
+        # Remove bullet point markers
+        text = re.sub(r'^\s*[-•]\s+', '', text, flags=re.MULTILINE)
+    
+        # Clean up multiple spaces
+        text = re.sub(r'\s+', ' ', text)
+    
+        # Clean up multiple newlines
+        text = re.sub(r'\n{3,}', '\n\n', text)
+    
+        return text.strip()
+
+    
     def _get_conversation_context(self) -> str:
         """Get relevant conversation context"""
         if len(self.conversation_history) < 2:

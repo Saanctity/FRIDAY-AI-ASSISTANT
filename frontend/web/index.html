@@ -1105,45 +1105,75 @@
             speak(text) {
                 if (this.speechSynthesis && text) {
                     this.speechSynthesis.cancel();
+                    this.isCurrentlySpeaking = true;
         
                     const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.rate = 0.9;
-                    utterance.pitch = 1.0;
-                    utterance.volume = 1.0;
         
-                    // Try to get a female voice
-                    const voices = this.speechSynthesis.getVoices();
-                    const femaleVoice = voices.find(voice => 
-                        voice.lang.startsWith('en') && 
-                        (voice.name.toLowerCase().includes('female') || 
-                        voice.name.toLowerCase().includes('zira') ||
-                        voice.name.toLowerCase().includes('karen') ||
-                        voice.name.toLowerCase().includes('samantha'))
-                    ) || voices.find(voice => voice.lang.startsWith('en'));
+                    // Improved voice settings for more natural sound
+                    utterance.rate = 0.9;      // Slightly slower
+                    utterance.pitch = 1.0;     // Normal pitch
+                    utterance.volume = 1.0;    // Full volume
         
-                    if (femaleVoice) {
-                        utterance.voice = femaleVoice;
+                    // Wait for voices to load
+                    let voices = this.speechSynthesis.getVoices();
+        
+                    if (voices.length === 0) {
+                        // Voices not loaded yet, wait and try again
+                        this.speechSynthesis.addEventListener('voiceschanged', () => {
+                            voices = this.speechSynthesis.getVoices();
+                            this.setVoice(utterance, voices);
+                        }, { once: true });
+                    } else {
+                        this.setVoice(utterance, voices);
                     }
-        
-                    utterance.onstart = () => {
-                        this.isCurrentlySpeaking = true;
-                        this.setSendStopButton(true);
-                    };
         
                     utterance.onend = () => {
                         this.isCurrentlySpeaking = false;
-                        this.setSendStopButton(false);
-                    };
-        
-                    utterance.onerror = (event) => {
-                        console.log('Speech error:', event.error);
-                        this.isCurrentlySpeaking = false;
-                        this.setSendStopButton(false);
                     };
         
                     this.speechSynthesis.speak(utterance);
                 }
-            }            
+            }
+
+            setVoice(utterance, voices) {
+                // Prioritize better voices
+                const preferredVoices = [
+                    'Google US English',
+                    'Microsoft Zira',
+                    'Samantha',
+                    'Karen',
+                    'Moira',
+                    'Fiona',
+                    'Google UK English Female'
+                ];
+    
+                let selectedVoice = null;
+    
+                // Try to find preferred voices
+                for (const preferred of preferredVoices) {
+                    selectedVoice = voices.find(voice => voice.name.includes(preferred));
+                    if (selectedVoice) break;
+                }
+    
+                // Fallback: any female English voice
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice => 
+                        voice.lang.startsWith('en') && 
+                        (voice.name.toLowerCase().includes('female') || 
+                         voice.name.toLowerCase().includes('woman'))
+                    );
+                }
+    
+                // Last resort: any English voice
+                if (!selectedVoice) {
+                    selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+                }
+    
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                    console.log('Using voice:', selectedVoice.name);
+                }
+            }
             
             addMessage(sender, content) {
                 const chatArea = document.getElementById('chatArea');
